@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="9BAaYUc4t6" />
+  
+  <title>nodejs-http-抓取bing首页图片 | 小菜&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="必应首页，封面的图片很好看，并且每天都更新，怎么Bing的图片展示在自己的首页呢？Let’s go!打开必应首页，F12打开，在页面加载完毕后，ajax会去响应的接口获取当日的图片以及图片的描述信息。
+
+复制这个接口连接：
+http://cn.bing.com/HPImageArchive.aspx?format=js&amp;amp;idx=0&amp;amp;n=1
+浏览器打开，可以看到url就是当日图片的地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs-http-抓取bing首页图片">
+<meta property="og:url" content="icaife.github.io/2014/10/05/nodejs-http-抓取bing首页图片/index.html">
+<meta property="og:site_name" content="小菜's Blog">
+<meta property="og:description" content="必应首页，封面的图片很好看，并且每天都更新，怎么Bing的图片展示在自己的首页呢？Let’s go!打开必应首页，F12打开，在页面加载完毕后，ajax会去响应的接口获取当日的图片以及图片的描述信息。
+
+复制这个接口连接：
+http://cn.bing.com/HPImageArchive.aspx?format=js&amp;amp;idx=0&amp;amp;n=1
+浏览器打开，可以看到url就是当日图片的地">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/bingimg-interface.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/bing-img-interface-json.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/local-json-show.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/bing-img.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nodejs-http-抓取bing首页图片">
+<meta name="twitter:description" content="必应首页，封面的图片很好看，并且每天都更新，怎么Bing的图片展示在自己的首页呢？Let’s go!打开必应首页，F12打开，在页面加载完毕后，ajax会去响应的接口获取当日的图片以及图片的描述信息。
+
+复制这个接口连接：
+http://cn.bing.com/HPImageArchive.aspx?format=js&amp;amp;idx=0&amp;amp;n=1
+浏览器打开，可以看到url就是当日图片的地">
+  
+    <link rel="alternative" href="/atom.xml" title="小菜&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="http://icaifeimg.qiniudn.com/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://icaifeimg.qiniudn.com/ava.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">小菜</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">耐得住寂寞，守得住繁华。</p>
+		
+
+		
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+			    <label class="onoffswitch-label" for="myonoffswitch">
+			        <span class="onoffswitch-inner"></span>
+			        <span class="onoffswitch-switch"></span>
+			    </label>
+			</div>
+		
+
+		<div class="switch-area">
+			<section class="first-part">
+				<nav class="header-menu">
+					<ul>
+					
+						<li><a href="/">主页</a></li>
+			        
+						<li><a href="/archives/">所有文章</a></li>
+			        
+						<li><a href="/links/">友链</a></li>
+			        
+						<li><a href="/about-me/">关于我</a></li>
+			        
+					</ul>
+				</nav>
+				<nav class="header-nav">
+					<div class="social">
+						
+							<a class="github" target="_blank" href="https://github.com/icaife" title="github">github</a>
+				        
+							<a class="weibo" target="_blank" href="http://weibo.com/detectivecoder" title="weibo">weibo</a>
+				        
+					</div>
+				</nav>
+			</section>
+			
+			
+			<section class="second-part">
+				<div class="widget tagcloud">
+					<a href="/tags/javascript/" style="font-size: 10px;">javascript</a><a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a><a href="/tags/面试题/" style="font-size: 20px;">面试题</a>
+				</div>
+			</section>
+			
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://icaifeimg.qiniudn.com/ava.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">小菜</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">耐得住寂寞，守得住繁华。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives/">所有文章</a></li>
+		        
+					<li><a href="/links/">友链</a></li>
+		        
+					<li><a href="/about-me/">关于我</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/icaife" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/detectivecoder" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-nodejs-http-抓取bing首页图片" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/10/05/nodejs-http-抓取bing首页图片/" class="article-date">
+  	<time datetime="2014-10-05T06:34:31.000Z" itemprop="datePublished">10月 5 2014</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nodejs-http-抓取bing首页图片
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>必应<a href="http://bing.com" target="_blank" rel="external">首页</a>，封面的图片很好看，并且每天都更新，怎么Bing的图片展示在自己的首页呢？Let’s go!<br>打开必应首页，F12打开，在页面加载完毕后，ajax会去响应的接口获取当日的图片以及图片的描述信息。</p>
+<p><img src="http://icaifeimg.qiniudn.com/bingimg-interface.png" alt="bingimg-interface.png"></p>
+<p>复制这个接口连接：</p>
+<pre><code>http://cn.bing.com/HPImageArchive.aspx?<span class="variable">format=</span>js&amp;<span class="variable">idx=</span><span class="number">0</span>&amp;<span class="variable">n=</span><span class="number">1</span>
+</code></pre><p>浏览器打开，可以看到url就是当日图片的地址了。<br><a id="more"></a><br><img src="http://icaifeimg.qiniudn.com/bing-img-interface-json.png" alt="bing-img-interface-json.png"></p>
+<p>接口地址中有三个主要参数，format、idx、n，format是输出格式，默认是xml，js就是json，idx，是返回距离今天之前的日期，0就是今天，1就是昨天，依次类推，n，不过n过大就不行了，是获取几张图片，1就只有今天的1张，2是今天加昨天的，依次类推。<br>现在我们通过nodejs的http模块去访问这个接口，然后将图片输出在自己的页面上，正好也可以当作一个小练习。<br>bingimg.js：</p>
+<pre><code><span class="keyword">var</span> HTTP = <span class="built_in">require</span>(<span class="string">'http'</span>);
+<span class="keyword">var</span> URL = <span class="built_in">require</span>(<span class="string">'url'</span>);
+
+HTTP.createServer(onRequest).listen(<span class="number">80</span>);
+<span class="built_in">console</span>.log(<span class="string">'server start on port 80!'</span>);
+
+<span class="function"><span class="keyword">function</span> <span class="title">getBingImg</span><span class="params">(format,idx,n,success,error)</span></span>{
+     <span class="keyword">var</span> url = <span class="string">'http://cn.bing.com/HPImageArchive.aspx?format='</span> + format + <span class="string">'&amp;idx='</span> + idx + <span class="string">'&amp;n='</span> + n;
+     <span class="keyword">var</span> buffer = [];
+     HTTP.get(url,<span class="function"><span class="keyword">function</span><span class="params">(back)</span></span>{
+          back.on(<span class="string">'data'</span>,<span class="function"><span class="keyword">function</span><span class="params">(data)</span></span>{<span class="comment">//on 看起来好像很熟悉的样子，jquery中,</span>
+                <span class="comment">//$dom.on('click',function(){});，这里很好地解释了node是基于事件驱动的(个人理解，不晓得错没得，望大神指点一二。)</span>
+               <span class="comment">//node把数据分成一小块一小块，当在数据接收完成之前都会出发data这个事件，函数返回的是数据</span>
+               buffer.push(data);<span class="comment">//这儿用数组装起来。</span>
+          }).on(<span class="string">'end'</span>,<span class="function"><span class="keyword">function</span><span class="params">()</span></span>{<span class="comment">//当数据接收完毕之后触发</span>
+               success(buffer.toString());
+          }).on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span><span class="params">(e)</span> </span>{<span class="comment">//出错后触发</span>
+               error();
+          });
+     });
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">onRequest</span><span class="params">(req,res)</span></span>{
+     <span class="keyword">var</span> callback = getParameter(req.url,<span class="string">'callback'</span>);
+
+     res.writeHead(<span class="number">200</span>, {<span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>});
+
+     <span class="keyword">var</span> cfg = {format : <span class="string">'js'</span>,idx : <span class="string">'1'</span>,n : <span class="string">'1'</span>,error : <span class="function"><span class="keyword">function</span><span class="params">(e)</span></span>{
+          res.end(<span class="string">'{error:1,msg:"can not get bing img!"}'</span>);
+     },success:<span class="function"><span class="keyword">function</span><span class="params">(data)</span></span>{
+          <span class="keyword">if</span>(callback){
+               res.writeHead(<span class="number">200</span>, {<span class="string">"Content-Type"</span>: <span class="string">"text/html"</span>});
+               <span class="comment">// var str = '&lt;script&gt;function ' + callback + '(data){console.log(data);}&lt;/script&gt;';</span>
+               res.end(callback + <span class="string">'('</span> + data + <span class="string">')'</span>);<span class="comment">//jsonp 用于跨域</span>
+               <span class="keyword">return</span> <span class="literal">true</span>;
+          }
+          res.end(data);
+     }};
+
+     getBingImg(cfg.format,cfg.idx,cfg.n,cfg.success,cfg.error);
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">getParameter</span><span class="params">(url,key)</span></span>{
+     <span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(key + <span class="string">'=([^&amp;]*)'</span>,<span class="string">'gi'</span>);
+     <span class="keyword">var</span> arr = reg.exec(url);
+     <span class="keyword">return</span> arr ? arr[<span class="number">1</span>] : <span class="string">''</span>;
+}
+</code></pre><p>在不跨域的情况下，直接访问，可以看到是标准的JSON格式（这儿用了chrome插件，美化json，json viewer）</p>
+<p><img src="http://icaifeimg.qiniudn.com/local-json-show.png" alt="local-json-show.png"></p>
+<p>有时会在其他站访问这个接口，此时需要跨域访问，具体代码如下：</p>
+<p><strong>jsonp.html</strong></p>
+<pre><code><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;<span class="title">html</span>&gt;</span>
+<span class="tag">&lt;<span class="title">head</span>&gt;</span>
+     <span class="tag">&lt;<span class="title">meta</span> <span class="attribute">chatset</span>=<span class="value">"utf-8"</span>&gt;</span>
+     <span class="tag">&lt;<span class="title">title</span>&gt;</span>获取Bing图片<span class="tag">&lt;/<span class="title">title</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">head</span>&gt;</span>
+<span class="tag">&lt;<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;<span class="title">button</span> <span class="attribute">id</span>=<span class="value">"btn"</span>&gt;</span>获取Bing图片<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+<span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">""</span> <span class="attribute">width</span>=<span class="value">"900"</span> <span class="attribute">id</span>=<span class="value">"img"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+     <span class="keyword">var</span> img = <span class="built_in">document</span>.getElementById(<span class="string">'img'</span>);
+     <span class="keyword">var</span> btn = <span class="built_in">document</span>.getElementById(<span class="string">'btn'</span>);
+     btn.onclick = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+          <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);
+          script.src = <span class="string">'http://localhost:80?callback=show'</span>;
+          <span class="keyword">var</span> head = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>];
+          head.appendChild(script);
+     }
+
+     <span class="function"><span class="keyword">function</span> <span class="title">show</span><span class="params">(data)</span></span>{
+          img.src = data.images[<span class="number">0</span>].url;
+     }
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">html</span>&gt;</span>
+</code></pre><p>点击按钮，即可获取图片：<br><img src="http://icaifeimg.qiniudn.com/bing-img.png" alt="bing-img.png"></p>
+<p>OVER.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/11/13/js-call-my-analysis/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          关于call 的面试题两则之我的分析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/10/02/nodejs-module/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">nodejs-module</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="nodejs-http-抓取bing首页图片" data-title="nodejs-http-抓取bing首页图片" data-url="icaife.github.io/2014/10/05/nodejs-http-抓取bing首页图片/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 小菜
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F0124a6faae4f3eeb1e974c1c97427e38' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <script src="/js/main.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
