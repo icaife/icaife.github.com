@@ -781,9 +781,9 @@ a {
 }
 .article img {
   max-width: 100%;
-  border: 1px solid #eee;
-  -webkit-box-shadow: 2px 2px 2px #eee;
-  box-shadow: 2px 2px 2px #eee;
+  border: 1px solid #ddd;
+  -webkit-box-shadow: 2px 2px 2px #ddd;
+  box-shadow: 2px 2px 2px #ddd;
 }
 .article em {
   padding: 0 5px;
