@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="9BAaYUc4t6" />
+  
+  <title>前端图片压缩并保留EXIF信息 | 小菜&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="乱弹：前段时间在写公司的上传组件，有个需求是前端压缩图片，并且保留EXIF信息，然后上传到服务器，IE6-9依赖的是库 mOxie，具体的就戳前面的地址吧，百度肯定是搜不到的，一搜出来保证是魔蝎座啥的。也是在这儿我才知道github的强大，感觉在写组件的这几天，阅读英文文档的能力有所提升啊，领悟太晚，罪过罪过。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端图片压缩并保留EXIF信息">
+<meta property="og:url" content="icaife.github.io/2015/05/19/js-compress-JPEG-width-exif/index.html">
+<meta property="og:site_name" content="小菜's Blog">
+<meta property="og:description" content="乱弹：前段时间在写公司的上传组件，有个需求是前端压缩图片，并且保留EXIF信息，然后上传到服务器，IE6-9依赖的是库 mOxie，具体的就戳前面的地址吧，百度肯定是搜不到的，一搜出来保证是魔蝎座啥的。也是在这儿我才知道github的强大，感觉在写组件的这几天，阅读英文文档的能力有所提升啊，领悟太晚，罪过罪过。">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/compress-image-flow.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/image.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/exif.gif">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/bin-img.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/image-size-compare.png">
+<meta property="og:image" content="http://icaifeimg.qiniudn.com/image-exif-compare.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端图片压缩并保留EXIF信息">
+<meta name="twitter:description" content="乱弹：前段时间在写公司的上传组件，有个需求是前端压缩图片，并且保留EXIF信息，然后上传到服务器，IE6-9依赖的是库 mOxie，具体的就戳前面的地址吧，百度肯定是搜不到的，一搜出来保证是魔蝎座啥的。也是在这儿我才知道github的强大，感觉在写组件的这几天，阅读英文文档的能力有所提升啊，领悟太晚，罪过罪过。">
+  
+    <link rel="alternative" href="/atom.xml" title="小菜&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="http://icaifeimg.qiniudn.com/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://icaifeimg.qiniudn.com/ava.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">小菜</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">The best or nothing.</p>
+		
+
+		
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+			    <label class="onoffswitch-label" for="myonoffswitch">
+			        <span class="onoffswitch-inner"></span>
+			        <span class="onoffswitch-switch"></span>
+			    </label>
+			</div>
+		
+
+		<div class="switch-area">
+			<section class="first-part">
+				<nav class="header-menu">
+					<ul>
+					
+						<li><a href="/">主页</a></li>
+			        
+						<li><a href="/archives/">所有文章</a></li>
+			        
+						<li><a href="/links/">友链</a></li>
+			        
+						<li><a href="/about-me/">关于我</a></li>
+			        
+					</ul>
+				</nav>
+				<nav class="header-nav">
+					<div class="social">
+						
+							<a class="github" target="_blank" href="https://github.com/icaife" title="github">github</a>
+				        
+							<a class="weibo" target="_blank" href="http://weibo.com/detectivecoder" title="weibo">weibo</a>
+				        
+					</div>
+				</nav>
+			</section>
+			
+			
+			<section class="second-part">
+				<div class="widget tagcloud">
+					<a href="/tags/html5/" style="font-size: 10px;">html5</a><a href="/tags/javascript/" style="font-size: 10px;">javascript</a><a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a><a href="/tags/面试题/" style="font-size: 20px;">面试题</a>
+				</div>
+			</section>
+			
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://icaifeimg.qiniudn.com/ava.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">小菜</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">The best or nothing.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives/">所有文章</a></li>
+		        
+					<li><a href="/links/">友链</a></li>
+		        
+					<li><a href="/about-me/">关于我</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/icaife" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/detectivecoder" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-js-compress-JPEG-width-exif" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/05/19/js-compress-JPEG-width-exif/" class="article-date">
+  	<time datetime="2015-05-19T02:52:39.000Z" itemprop="datePublished">5月 19 2015</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/html5/">html5</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      前端图片压缩并保留EXIF信息
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="乱弹：">乱弹：</h2><p>前段时间在写公司的上传组件，有个需求是前端压缩图片，并且保留EXIF信息，然后上传到服务器，IE6-9依赖的是库 <a href="https://github.com/moxiecode/moxie" title="mOxie" target="_blank" rel="external">mOxie</a>，具体的就戳前面的地址吧，百度肯定是搜不到的，一搜出来保证是魔蝎座啥的。也是在这儿我才知道<a href="http://github.com" title="github" target="_blank" rel="external">github</a>的强大，感觉在写组件的这几天，阅读英文文档的能力有所提升啊，领悟太晚，罪过罪过。<a id="more"></a>感觉这是我目前的瓶颈之一——不能合理利用资源，瓶颈老在那儿卡着很不舒服啊，得想办法突破，突破的过程固然是比较困难的，限于能力，之前从来没写过这些东西，有时候有点想放弃的念头，在这儿又想起那一句话：“不是你不能，而是你对自己的要求太低。” 老大也说过：“不能呆几个月写的全是自己写过的东西啊！”，一想回来，咦，目前对自己的要求是有点低，这么早下班回去干嘛啊，还不如在公司加会儿班，还有饭吃，还可以利用公司的资源学习，提升自己的能力，不加班真是太亏了！再坚持一下，网上各种查资料，功夫不负有心人，成功了！</p>
+<hr>
+<h2 id="正题">正题</h2><p>上面说了，IE6-9依赖的是<a href="https://github.com/moxiecode/moxie" title="mOxie" target="_blank" rel="external">mOxie</a>，在低版本的IE下，mOxie判断当前运行环境，利用了<em>Flash</em>或者<em>Silverlight</em>与服务器交互，实现文件异步上传，这儿有个坑注意下：如果flash文件或者xap文件放到CDN上，然后在不同域使用<em>mOxie</em>的话，会出现跨域的情况，<em>Flash</em>在跨域调用的时候会检查<em>crossdomain.xml</em>来判断当前域是否安全，这儿记得在服务器端设置一下。</p>
+<p>当然，图片处理，<strong>mOxie</strong>这么强大的工具肯定是支持的，具体用法看官方文档额！在支持<strong>H5</strong>的浏览器下，我们需要按需加载，我们不想依赖<strong>mOxie</strong>来处理，这得要我们自己处理了。我的思路是：压缩之前，把<a href="http://www.baidu.com/s?wd=exif" title="exif" target="_blank" rel="external"><strong>EXIF</strong></a>信息从源文件取出来，并不关心<strong>EXIF</strong>里面具体是什么东西，只管拿出来就行，然后将源文件压缩，然后再把刚才取出来的<strong>EXIF</strong>信息插入到压缩后的图片里面就行了。</p>
+<p>流程图：<br><img src="http://icaifeimg.qiniudn.com/compress-image-flow.png" alt=""></p>
+<ul>
+<li><strong>获取图片并且展示出来：</strong></li>
+</ul>
+<p>要处理图片我们得拿到图片吧，利用H5的<em>File API</em>我们就可以做这个事情了！没错就是<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader" title="FileReader" target="_blank" rel="external"><em>FileReader</em></a>，顾名思义，就是文件读取者了。官方解释：</p>
+<blockquote>
+<p>使用<em>FileReader</em>对象,web应用程序可以异步的读取存储在用户计算机上的文件(或者原始数据缓冲)内容,可以使用<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/File" target="_blank" rel="external"><em>File</em></a>对象或者<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Blob" target="_blank" rel="external"><em>Blob</em></a>对象来指定所要处理的文件或数据.其中<em>File</em>对象可以是来自用户在一个<em>input</em>元素上选择文件后返回的<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/FileList" target="_blank" rel="external"><em>FileList</em></a>对象,也可以来自拖放操作生成的 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement" target="_blank" rel="external"><em>DataTransfer</em></a>对象,还可以是来自在一个<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement" target="_blank" rel="external"><em>HTMLCanvasElement</em></a>上执行<em>mozGetAsFile()</em>方法后的返回结果.</p>
+</blockquote>
+<p>首先得创建一个FileReader实例：</p>
+<pre><code><span class="keyword">var</span> fileReader = <span class="keyword">new</span> FileReader();
+</code></pre><p><strong>方法概述：</strong></p>
+<blockquote>
+<p>void readAsArrayBuffer(in Blob blob);</p>
+<p>void readAsDataURL(in Blob blob);</p>
+</blockquote>
+<p><strong>事件处理：</strong><br>onload 当读取操作成功完成时调用.</p>
+<p>读取图片并且预览：</p>
+<p><strong>html:</strong></p>
+<pre><code>&lt;<span class="tag">input</span> type=<span class="string">"file"</span> id=<span class="string">"filedom"</span> /&gt;
+&lt;<span class="tag">img</span> src=<span class="string">"#"</span> <span class="attribute">width</span>=<span class="string">"200"</span> id=<span class="string">"img"</span>&gt;
+&lt;br&gt;
+&lt;<span class="tag">button</span> id=<span class="string">"btn"</span>&gt;获取&lt;/button&gt;
+</code></pre><p><strong>js:</strong></p>
+<pre><code><span class="keyword">var</span> filedom = <span class="built_in">document</span>.getElementById(<span class="string">"file"</span>);
+<span class="keyword">var</span> imgdom = <span class="built_in">document</span>.getElementById(<span class="string">"img"</span>);
+<span class="keyword">var</span> btn = <span class="built_in">document</span>.getElementById(<span class="string">"btn"</span>);
+
+btn.onclick = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{            
+    <span class="keyword">var</span> imgFile = filedom.files[<span class="number">0</span>];
+
+    <span class="keyword">if</span>(!imgFile){    
+        alert(<span class="string">"请选择图片文件！"</span>);
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+
+    showImage(imgFile,<span class="function"><span class="keyword">function</span><span class="params">(src)</span></span>{
+        img.src = src;
+    });
+
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">showImage</span><span class="params">(file,callback)</span></span>{
+    <span class="keyword">var</span> reader = <span class="keyword">new</span> FileReader();
+    reader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+        callback(reader.result);
+    }
+    reader.readAsDataURL(file);
+}
+</code></pre><p><strong>执行结果：</strong><br><img src="http://icaifeimg.qiniudn.com/image.png" alt=""></p>
+<p>上面代码已经可以读取图片了哦！</p>
+<ul>
+<li><strong>利用</strong>canvas<strong>压缩图片：</strong><br>查看<strong><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement" target="_blank" rel="external">canvas api</a></strong>，可以看到 <strong>drawImage</strong> 函数，画图函数，把图用<strong>canvas</strong>画出来，然后再用 <strong>toBlob</strong> 将绘制好的图片转换成一个二进制对象。暂且把这个blob暂存起来待会儿再用。</li>
+</ul>
+<p>然而一切并不那么顺利，每个浏览器对toBlob处理方式有所差异，这里得做兼容处理！<br><strong>HTMLCanvasElement.prototype.toBlob</strong> 函数兼容代码：</p>
+<pre><code><span class="list">(<span class="keyword">function</span><span class="list">()</span> <span class="collection">{
+    var CanvasPrototype = window.HTMLCanvasElement &amp;&amp;
+        window.HTMLCanvasElement.prototype,
+        hasBlobConstructor = window.Blob &amp;&amp; <span class="list">(<span class="keyword">function</span><span class="list">()</span> <span class="collection">{
+            try <span class="collection">{
+                return Boolean<span class="list">(<span class="keyword"><span class="built_in">new</span></span> Blob<span class="list">()</span>)</span><span class="comment">;</span>
+            }</span> catch <span class="list">(<span class="keyword">e</span>)</span> <span class="collection">{
+                return <span class="literal">false</span><span class="comment">;</span>
+            }</span>
+        }</span><span class="list">()</span>)</span>,
+        hasArrayBufferViewSupport = hasBlobConstructor &amp;&amp; window.Uint8Array &amp;&amp;
+        <span class="list">(<span class="keyword">function</span><span class="list">()</span> <span class="collection">{
+            try <span class="collection">{
+                return new Blob<span class="list">(<span class="collection">[new Uint8Array<span class="list">(<span class="number">100</span>)</span>]</span>)</span>.size === <span class="number">100</span><span class="comment">;</span>
+            }</span> catch <span class="list">(<span class="keyword">e</span>)</span> <span class="collection">{
+                return <span class="literal">false</span><span class="comment">;</span>
+            }</span>
+        }</span><span class="list">()</span>)</span>,
+        BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder ||
+        window.MozBlobBuilder || window.MSBlobBuilder,
+        dataURLtoBlob = <span class="list">(<span class="keyword">hasBlobConstructor</span> || BlobBuilder)</span> &amp;&amp; window.atob &amp;&amp;
+        window.ArrayBuffer &amp;&amp; window.Uint8Array &amp;&amp; function<span class="list">(<span class="keyword">dataURI</span>)</span> <span class="collection">{
+            var byteString,
+                arrayBuffer,
+                intArray,
+                i,
+                mimeString,
+                bb;
+            if <span class="list">(<span class="keyword">dataURI.split</span><span class="list">(<span class="string">","</span>)</span><span class="collection">[<span class="number">0</span>]</span>.indexOf<span class="list">(<span class="string">"base64"</span>)</span> &gt;= <span class="number">0</span>)</span> <span class="collection">{
+                // Convert base64 to raw binary data held in a string:
+                byteString = atob<span class="list">(<span class="keyword">dataURI.split</span><span class="list">(<span class="string">","</span>)</span><span class="collection">[<span class="number">1</span>]</span>)</span><span class="comment">;</span>
+            }</span> else <span class="collection">{
+                // Convert base64/URLEncoded data component to raw binary data:
+                byteString = decodeURIComponent<span class="list">(<span class="keyword">dataURI.split</span><span class="list">(<span class="string">","</span>)</span><span class="collection">[<span class="number">1</span>]</span>)</span><span class="comment">;</span>
+            }</span>
+            // Write the bytes of the string to an ArrayBuffer:
+            arrayBuffer = new ArrayBuffer<span class="list">(<span class="keyword">byteString.length</span>)</span><span class="comment">;</span>
+            intArray = new Uint8Array<span class="list">(<span class="keyword">arrayBuffer</span>)</span><span class="comment">;</span>
+            for <span class="list">(<span class="keyword">i</span> = <span class="number">0</span><span class="comment">; i &lt; byteString.length; i += 1) {</span>
+                intArray<span class="collection">[i]</span> = byteString.charCodeAt<span class="list">(<span class="keyword">i</span>)</span><span class="comment">;</span>
+            }
+            // Separate out the mime component:
+            mimeString = dataURI.split<span class="list">(<span class="string">","</span>)</span><span class="collection">[<span class="number">0</span>]</span>.split<span class="list">(<span class="string">":"</span>)</span><span class="collection">[<span class="number">1</span>]</span>.split<span class="list">(<span class="string">";"</span>)</span><span class="collection">[<span class="number">0</span>]</span><span class="comment">;</span>
+            // Write the ArrayBuffer <span class="list">(<span class="keyword"><span class="built_in">or</span></span> ArrayBufferView)</span> to a blob:
+            if <span class="list">(<span class="keyword">hasBlobConstructor</span>)</span> <span class="collection">{
+                return new Blob<span class="list">(
+                    <span class="collection">[hasArrayBufferViewSupport ? intArray : arrayBuffer]</span>, <span class="collection">{
+                        type: mimeString
+                    }</span>
+                )</span><span class="comment">;</span>
+            }</span>
+            bb = new BlobBuilder<span class="list">()</span><span class="comment">;</span>
+            bb.append<span class="list">(<span class="keyword">arrayBuffer</span>)</span><span class="comment">;</span>
+            return bb.getBlob<span class="list">(<span class="keyword">mimeString</span>)</span><span class="comment">;</span>
+        }<span class="comment">;</span>
+    if <span class="list">(<span class="keyword">window.HTMLCanvasElement</span> &amp;&amp; !CanvasPrototype.toBlob)</span> <span class="collection">{
+        if <span class="list">(<span class="keyword">CanvasPrototype.mozGetAsFile</span>)</span> <span class="collection">{
+            CanvasPrototype.toBlob = function<span class="list">(<span class="keyword">callback</span>, type, quality)</span> <span class="collection">{
+                if <span class="list">(<span class="keyword">quality</span> &amp;&amp; CanvasPrototype.toDataURL &amp;&amp; dataURLtoBlob)</span> <span class="collection">{
+                    callback<span class="list">(<span class="keyword">dataURLtoBlob</span><span class="list">(<span class="keyword">this.toDataURL</span><span class="list">(<span class="keyword"><span class="built_in">type</span></span>, quality)</span>)</span>)</span><span class="comment">;</span>
+                }</span> else <span class="collection">{
+                    callback<span class="list">(<span class="keyword">this.mozGetAsFile</span><span class="list">(<span class="string">"blob"</span>, type)</span>)</span><span class="comment">;</span>
+                }</span>
+            }</span><span class="comment">;</span>
+        }</span> else if <span class="list">(<span class="keyword">CanvasPrototype.toDataURL</span> &amp;&amp; dataURLtoBlob)</span> <span class="collection">{
+            CanvasPrototype.toBlob = function<span class="list">(<span class="keyword">callback</span>, type, quality)</span> <span class="collection">{
+                callback<span class="list">(<span class="keyword">dataURLtoBlob</span><span class="list">(<span class="keyword">this.toDataURL</span><span class="list">(<span class="keyword"><span class="built_in">type</span></span>, quality)</span>)</span>)</span><span class="comment">;</span>
+            }</span><span class="comment">;</span>
+        }</span>
+    }</span>
+})</span><span class="list">()</span><span class="comment">;</span></span></span></span>
+</code></pre><p><strong>图片压缩代码：</strong></p>
+<pre><code>function imageResize(img, <span class="variable">width</span>, <span class="variable">height</span>, quality,callback) {
+    var type = <span class="string">"image/jpeg"</span>;
+    var canvas = document.createElement(<span class="string">"canvas"</span>),
+        ctx = canvas.getContext(<span class="string">"2d"</span>);
+    <span class="comment">// quality = options.quality || 0.8;</span>
+    canvas.<span class="variable">width</span> = <span class="variable">width</span>;
+    canvas.<span class="variable">height</span> = <span class="variable">height</span>;
+    ctx.drawImage(img, <span class="number">0</span>, <span class="number">0</span>, <span class="variable">width</span>, <span class="variable">height</span>);
+    canvas.toBlob(callback, type, quality);
+}
+</code></pre><ul>
+<li>取出<a href="http://www.baidu.com/s?wd=exif" title="exif" target="_blank" rel="external"><strong>EXIF</strong></a>信息,这里有点蛋疼，研究半天呢。。。这得去看JPEG图片编码规律，请戳这儿：<a href="http://www.cnblogs.com/leaven/archive/2010/04/06/1705846.html" target="_blank" rel="external">JPEG文件编/解码详解</a>，<br>先看图：<br><img src="http://icaifeimg.qiniudn.com/exif.gif" alt="exif"></li>
+</ul>
+<p>整个JPEG图片的组成。<br>用sublime打开一个标准的JPEG图片，就可以看到：<br><img src="http://icaifeimg.qiniudn.com/bin-img.png" alt=""></p>
+<p>每个JPEG图片文件都以 <strong>0xffd8</strong> 开始，称作<strong>SOI</strong>(Start of Image)，以 <strong>0xffd9</strong> 结束，称作<strong>EOI</strong>(End of Image),<strong>EXIF</strong> 每一项都有一个具体的值，记录格式如下：</p>
+<pre><code><span class="number">0</span>xff+标记号<span class="comment">(1个字节)</span> + 数据大小描述符<span class="comment">(2个字节)</span>+数据内容<span class="comment">(n个字节)</span>
+</code></pre><p>通过这个格式，我们就可以通过读取二进制文件把整个EXIF信息取出来了！</p>
+<p>首先我们得利用规律编码格式把里面的标记以及值等分割开来：</p>
+<pre><code><span class="comment">/*
+ * @param rawImageArray{ArrayBuffer|Array|Blob}  原始图
+ * @param callback{Function} 回调函数
+ */</span>
+<span class="function"><span class="keyword">function</span> <span class="title">getSegments</span><span class="params">(rawImage, callback)</span> </span>{
+    <span class="keyword">if</span> (rawImage instanceof Blob) {
+        <span class="keyword">var</span> that = <span class="keyword">this</span>;
+        <span class="keyword">var</span> fileReader = <span class="keyword">new</span> FileReader();
+        fileReader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+            that.getSegments(fileReader.result, <span class="keyword">callback</span>);
+        };
+        fileReader.readAsArrayBuffer(rawImage);
+    } <span class="keyword">else</span> {
+        <span class="keyword">if</span> (!rawImage.length &amp;&amp; !rawImage.byteLength) {
+            <span class="keyword">return</span> [];
+        }
+        <span class="keyword">var</span> head = <span class="number">0</span>,
+            segments = [];
+        <span class="keyword">var</span> length,
+            endPoint,
+            seg;
+        <span class="keyword">var</span> arr = [].slice.call(<span class="keyword">new</span> Uint8Array(rawImage), <span class="number">0</span>);
+
+        <span class="keyword">while</span> (<span class="number">1</span>) {
+            <span class="keyword">if</span> (arr[head] === <span class="number">0xff</span> &amp;&amp; arr[head + <span class="number">1</span>] === <span class="number">0xda</span>) { <span class="comment">//Start of Scan 0xff 0xda  SOS</span>
+                <span class="keyword">break</span>;
+            }
+
+            <span class="keyword">if</span> (arr[head] === <span class="number">0xff</span> &amp;&amp; arr[head + <span class="number">1</span>] === <span class="number">0xd8</span>) { <span class="comment">//Start of Image 0xff 0xd8  SOI</span>
+                head += <span class="number">2</span>;
+            } <span class="keyword">else</span> { <span class="comment">//找到每个marker</span>
+                length = arr[head + <span class="number">2</span>] * <span class="number">256</span> + arr[head + <span class="number">3</span>]; <span class="comment">//每个marker 后 的两个字节为 该marker信息的长度</span>
+                endPoint = head + length + <span class="number">2</span>;
+                seg = arr.slice(head, endPoint); <span class="comment">//截取信息</span>
+                head = endPoint;
+                segments.push(seg); <span class="comment">//将每个marker + 信息 push 进去。</span>
+            }
+            <span class="keyword">if</span> (head &gt; arr.length) {
+                <span class="keyword">break</span>;
+            }
+        }
+        <span class="keyword">callback</span>(segments);
+    }
+}
+</code></pre><p><strong>然后取出EXIF信息：</strong></p>
+<pre><code><span class="comment">/*
+ *<span class="phpdoc"> @param</span> segments{Array|Uint8Array} 处理后的segments
+ */</span>
+<span class="function"><span class="keyword">function</span> <span class="title">getEXIF</span><span class="params">(segments)</span> </span>{
+    <span class="keyword">if</span> (!segments.length) {
+        <span class="keyword">return</span> [];
+    }
+    <span class="keyword">var</span> seg = [];
+    <span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; segments.length; x++) {
+        <span class="keyword">var</span> s = segments[x];
+        <span class="comment">//TODO segments</span>
+        <span class="keyword">if</span> (s[<span class="number">0</span>] === <span class="number">0xff</span> &amp;&amp; s[<span class="number">1</span>] === <span class="number">0xe1</span>) { <span class="comment">// app1 exif 0xff 0xe1</span>
+            seg = seg.concat(s);
+        }
+    }
+    <span class="keyword">return</span> seg;
+}
+</code></pre><p><strong>将来取出的EXIF信息插入到压缩后的图片中去：</strong></p>
+<pre><code><span class="comment">/*
+ * @param resizedImg{ArrayBuffer|Blob} 压缩后的图片
+ * @param exifArr{Array|Uint8Array} EXIF信息数组
+ * @param callback{Function} 回调函数
+ */</span>
+<span class="function"><span class="keyword">function</span> <span class="title">insertEXIF</span><span class="params">(resizedImg, exifArr, callback)</span> </span>{
+    <span class="keyword">if</span> (resizedImg <span class="keyword">instanceof</span> Blob) {
+        <span class="keyword">var</span> that = <span class="keyword">this</span>;
+        <span class="keyword">var</span> fileReader = <span class="keyword">new</span> FileReader();
+        fileReader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+            that.insertEXIF(fileReader.result, exifArr, callback);
+        };
+        fileReader.readAsArrayBuffer(resizedImg);
+    } <span class="keyword">else</span> {
+        <span class="keyword">var</span> arr = [].slice.call(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(resizedImg), <span class="number">0</span>);
+        <span class="keyword">if</span> (arr[<span class="number">2</span>] !== <span class="number">0xff</span> || arr[<span class="number">3</span>] !== <span class="number">0xe0</span>) {
+            <span class="comment">// throw new Error("Couldn't find APP0 marker from resized image data.");</span>
+            <span class="keyword">return</span> resizedImg; <span class="comment">//不是标准的JPEG文件</span>
+        }
+
+        <span class="keyword">var</span> app0_length = arr[<span class="number">4</span>] * <span class="number">256</span> + arr[<span class="number">5</span>]; <span class="comment">//两个字节</span>
+
+        <span class="keyword">var</span> newImage = [<span class="number">0xff</span>, <span class="number">0xd8</span>].concat(exifArr, arr.slice(<span class="number">4</span> + app0_length)); <span class="comment">//合并文件 SOI + EXIF + 去除APP0的图像信息</span>
+
+        callback(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(newImage));
+    }
+}
+</code></pre><p><strong>代码整理一下：</strong></p>
+<pre><code><span class="keyword">var</span> ImageTool = {
+    <span class="comment">/*
+     * @param rawImageArray{ArrayBuffer|Array|Blob}
+     */</span>
+    getSegments: <span class="function"><span class="keyword">function</span><span class="params">(rawImage, callback)</span> </span>{
+        <span class="keyword">if</span> (rawImage <span class="keyword">instanceof</span> Blob) {
+            <span class="keyword">var</span> that = <span class="keyword">this</span>;
+            <span class="keyword">var</span> fileReader = <span class="keyword">new</span> FileReader();
+            fileReader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+                that.getSegments(fileReader.result, callback);
+            };
+            fileReader.readAsArrayBuffer(rawImage);
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span> (!rawImage.length &amp;&amp; !rawImage.byteLength) {
+                <span class="keyword">return</span> [];
+            }
+            <span class="keyword">var</span> head = <span class="number">0</span>,
+                segments = [];
+            <span class="keyword">var</span> length,
+                endPoint,
+                seg;
+            <span class="keyword">var</span> arr = [].slice.call(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(rawImage), <span class="number">0</span>);
+
+            <span class="keyword">while</span> (<span class="number">1</span>) {
+                <span class="keyword">if</span> (arr[head] === <span class="number">0xff</span> &amp;&amp; arr[head + <span class="number">1</span>] === <span class="number">0xda</span>) { <span class="comment">//Start of Scan 0xff 0xda  SOS</span>
+                    <span class="keyword">break</span>;
+                }
+
+                <span class="keyword">if</span> (arr[head] === <span class="number">0xff</span> &amp;&amp; arr[head + <span class="number">1</span>] === <span class="number">0xd8</span>) { <span class="comment">//Start of Image 0xff 0xd8  SOI</span>
+                    head += <span class="number">2</span>;
+                } <span class="keyword">else</span> { <span class="comment">//找到每个marker</span>
+                    length = arr[head + <span class="number">2</span>] * <span class="number">256</span> + arr[head + <span class="number">3</span>]; <span class="comment">//每个marker 后 的两个字节为 该marker信息的长度</span>
+                    endPoint = head + length + <span class="number">2</span>;
+                    seg = arr.slice(head, endPoint); <span class="comment">//截取信息</span>
+                    head = endPoint;
+                    segments.push(seg); <span class="comment">//将每个marker + 信息 push 进去。</span>
+                }
+                <span class="keyword">if</span> (head &gt; arr.length) {
+                    <span class="keyword">break</span>;
+                }
+            }
+            callback(segments);
+        }
+    },
+    <span class="comment">/*
+     * @param resizedImg{ArrayBuffer|Blob}
+     * @param exifArr{Array|Uint8Array}
+     */</span>
+    insertEXIF: <span class="function"><span class="keyword">function</span><span class="params">(resizedImg, exifArr, callback)</span> </span>{
+        <span class="keyword">if</span> (resizedImg <span class="keyword">instanceof</span> Blob) {
+            <span class="keyword">var</span> that = <span class="keyword">this</span>;
+            <span class="keyword">var</span> fileReader = <span class="keyword">new</span> FileReader();
+            fileReader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+                that.insertEXIF(fileReader.result, exifArr, callback);
+            };
+            fileReader.readAsArrayBuffer(resizedImg);
+        } <span class="keyword">else</span> {
+            <span class="keyword">var</span> arr = [].slice.call(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(resizedImg), <span class="number">0</span>);
+            <span class="keyword">if</span> (arr[<span class="number">2</span>] !== <span class="number">0xff</span> || arr[<span class="number">3</span>] !== <span class="number">0xe0</span>) {
+                <span class="comment">// throw new Error("Couldn't find APP0 marker from resized image data.");</span>
+                <span class="keyword">return</span> resizedImg; <span class="comment">//不是标准的JPEG文件</span>
+            }
+
+            <span class="keyword">var</span> app0_length = arr[<span class="number">4</span>] * <span class="number">256</span> + arr[<span class="number">5</span>]; <span class="comment">//两个字节</span>
+
+            <span class="keyword">var</span> newImage = [<span class="number">0xff</span>, <span class="number">0xd8</span>].concat(exifArr, arr.slice(<span class="number">4</span> + app0_length)); <span class="comment">//合并文件 SOI + EXIF + 去除APP0的图像信息</span>
+
+            callback(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(newImage));
+        }
+    },
+    <span class="comment">/*
+     * @param segments{Array|Uint8Array}
+     */</span>
+    getEXIF: <span class="function"><span class="keyword">function</span><span class="params">(segments)</span> </span>{
+        <span class="keyword">if</span> (!segments.length) {
+            <span class="keyword">return</span> [];
+        }
+        <span class="keyword">var</span> seg = [];
+        <span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; segments.length; x++) {
+            <span class="keyword">var</span> s = segments[x];
+            <span class="comment">//TODO segments</span>
+            <span class="keyword">if</span> (s[<span class="number">0</span>] === <span class="number">0xff</span> &amp;&amp; s[<span class="number">1</span>] === <span class="number">0xe1</span>) { <span class="comment">// app1 exif 0xff 0xe1</span>
+                seg = seg.concat(s);
+            }
+        }
+        <span class="keyword">return</span> seg;
+    },
+    <span class="comment">/*
+     *@param base64{String}
+     */</span>
+    decode64: <span class="function"><span class="keyword">function</span><span class="params">(base64)</span> </span>{
+        <span class="keyword">var</span> b64 = <span class="string">"data:image/jpeg;base64,"</span>;
+        <span class="keyword">if</span> (base64.slice(<span class="number">0</span>, <span class="number">23</span>) !== b64) {
+            <span class="keyword">return</span> [];
+        }
+        <span class="keyword">var</span> binStr = <span class="built_in">window</span>.atob(base64.replace(b64, <span class="string">""</span>));
+        <span class="keyword">var</span> buf = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(binStr.length);
+        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = binStr.length; i &lt; len; i++) {
+            buf[i] = binStr.charCodeAt(i);
+        }
+        <span class="keyword">return</span> buf;
+    },
+    <span class="comment">/*
+     *@param arr{Array}
+     */</span>
+    encode64: <span class="function"><span class="keyword">function</span><span class="params">(arr)</span> </span>{
+        <span class="keyword">var</span> data = <span class="string">""</span>;
+        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = arr.length; i &lt; len; i++) {
+            data += <span class="built_in">String</span>.fromCharCode(arr[i]);
+        }
+        <span class="keyword">return</span> <span class="string">"data:image/jpeg;base64,"</span> + <span class="built_in">window</span>.btoa(data);
+    }
+};
+</code></pre><p>最终的代码：<br>把上面的代码综合一下，完成图片压缩并且保存EXIF：</p>
+<pre><code><span class="keyword">var</span> filedom = <span class="built_in">document</span>.getElementById(<span class="string">"file"</span>);
+<span class="keyword">var</span> imgdom = <span class="built_in">document</span>.getElementById(<span class="string">"img"</span>);
+<span class="keyword">var</span> btn = <span class="built_in">document</span>.getElementById(<span class="string">"btn"</span>);
+
+btn.onclick = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{            
+    <span class="keyword">var</span> imgFile = filedom.files[<span class="number">0</span>];
+
+    <span class="keyword">if</span>(!imgFile){    
+        alert(<span class="string">"请选择图片文件！"</span>);
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+
+    showImage(imgFile,<span class="function"><span class="keyword">function</span><span class="params">(src)</span></span>{
+        imgdom.src = src;
+        imgdom.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+            imageResize(imgdom,<span class="number">400</span>,<span class="number">225</span>,<span class="number">1</span>,<span class="function"><span class="keyword">function</span><span class="params">(blob)</span></span>{
+                ImageTool.getSegments(imgFile,<span class="function"><span class="keyword">function</span><span class="params">(segments)</span></span>{
+                    <span class="keyword">var</span> exif = ImageTool.getEXIF(segments);<span class="comment">//获取exif信息</span>
+                    ImageTool.insertEXIF(blob,exif,<span class="function"><span class="keyword">function</span><span class="params">(newImage)</span></span>{
+                            showImage(<span class="keyword">new</span> Blob([newImage],{type : <span class="string">"image/jpeg"</span>}),<span class="function"><span class="keyword">function</span><span class="params">(src)</span></span>{
+                                <span class="keyword">var</span> img = <span class="keyword">new</span> Image();
+                                img.src = src;
+                                <span class="built_in">document</span>.body.appendChild(img);
+                            });
+                    });
+                });<span class="comment">//获取 分割 segments</span>
+            });
+        }
+    });
+
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">showImage</span><span class="params">(file,callback)</span></span>{
+    <span class="keyword">var</span> reader = <span class="keyword">new</span> FileReader();
+    reader.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+        callback(reader.result);
+    }
+    reader.readAsDataURL(file);
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">imageResize</span><span class="params">(img, width, height, quality,callback)</span> </span>{
+    <span class="keyword">var</span> type = <span class="string">"image/jpeg"</span>;
+    <span class="keyword">var</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">"canvas"</span>),
+        ctx = canvas.getContext(<span class="string">"2d"</span>);
+    <span class="comment">// quality = options.quality || 0.8;</span>
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(img, <span class="number">0</span>, <span class="number">0</span>, width, height);
+    canvas.toBlob(callback, type, quality);
+}
+</code></pre><p><strong>运行结果：</strong></p>
+<p>尺寸对比：</p>
+<p><img src="http://icaifeimg.qiniudn.com/image-size-compare.png" alt=""></p>
+<p>EXIF信息对比：<br><a href="http://exif.cn/view/4052007/" target="_blank" rel="external">压缩前</a><br><a href="http://exif.cn/view/4052012/" target="_blank" rel="external">压缩后</a><br><img src="http://icaifeimg.qiniudn.com/image-exif-compare.png" alt=""></p>
+<p><strong>附件：</strong></p>
+<pre><code>压缩前的图片：<span class="string">http:</span><span class="comment">//icaifeimg.qiniudn.com/nokia.jpg (2.2mb)</span>
+
+压缩后的图片：<span class="string">http:</span><span class="comment">//icaifeimg.qiniudn.com/nokia-compressed-width-exif.jpg (205kb)</span>
+</code></pre><ul>
+<li><p>参考</p>
+<pre><code><span class="string">http:</span><span class="comment">//code.flickr.net/2012/06/01/parsing-exif-client-side-using-javascript-2/</span>
+<span class="string">http:</span><span class="comment">//code.ciaoca.com/javascript/exif-js/</span>
+<span class="string">http:</span><span class="comment">//blog.csdn.net/yyjsword/article/details/28876739</span>
+</code></pre></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/03/02/fe-interview-summarize/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">个人总结的前端面试题-TODO</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="js-compress-JPEG-width-exif" data-title="前端图片压缩并保留EXIF信息" data-url="icaife.github.io/2015/05/19/js-compress-JPEG-width-exif/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 小菜
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F0124a6faae4f3eeb1e974c1c97427e38' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <script src="/js/main.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
