@@ -494,17 +494,51 @@
 
 			function genEmpty(n, t) {
 				var str = "";
-				if (n <= 0)="" {="" return="" str;="" }="" for="" (var="" i="0;" <="" n;="" i++)="" str="" +="t" ||="" "<li="" class="\"d-item" d-none\"="">&nbsp;";
+				if (n <= 0) {
+					return str;
+				}
+				for (var i = 0; i < n; i++) {
+					str += t || "<li class=\"d-item d-none\">&nbsp;</li>";
 				}
 				return str;
 			}
 
 			function genDay(n) {
 				var str = "";
-				for (var i = 1; i <= n;="" i++)="" {="" var="" tmp="{" year:="" y,="" month:="" m,="" day:="" i="" };="" args="{" 回调函数的参数="" date:="" that.getdate(tmp)="" args.inrange="that.inRange(tmp," mindate,="" maxdate);="" if="" (args.inrange)="" args.focus="that.dateEqual(tmp," focusdate);="" args.skip="that.dateEqual(tmp," skipdate);="" args.selected="that.dateEqual(tmp," [selecteddate,="" relativedate]);="" 选中状态="" }="" (dayformater)="" str="" +="(dayFormater" &&="" dayformater(i,="" args))="" ||="" "";="" else="" tmpclass="" ;="" (cfg.__startfrom)="" relativedate)="" ?="" "="" d-start"="" :="" d-end";="" (cfg.__endto)="" d-end"="" d-start";="" that.format(args.date)="" "\"="" data-day="\""" data-week="\""" args.date.week="" data-month="\""" args.date.month="" data-year="\""" args.date.year="" class="\"d-item"" (args.focus="" d-focus"="" "")="" (args.inrange="" (args.skip="" d-dis"="" (args.selected="" d-selected"="" ""))="" d-dis")="">" +
-							"<span class="\"d-wraper\"">" + i +
+				for (var i = 1; i <= n; i++) {
+					var tmp = {
+						year: y,
+						month: m,
+						day: i
+					};
+					var args = { //回调函数的参数
+						date: that.getDate(tmp)
+					};
+
+					args.inRange = that.inRange(tmp, minDate, maxDate);
+					if (args.inRange) {
+						args.focus = that.dateEqual(tmp, focusDate);
+						args.skip = that.dateEqual(tmp, skipDate);
+						args.selected = that.dateEqual(tmp, [selectedDate, relativeDate]); //选中状态
+					}
+
+
+					if (dayFormater) {
+						str += (dayFormater && dayFormater(i, args)) || "";
+					} else {
+						var tmpClass = "";
+						if (cfg.__startFrom) {
+							tmpClass = that.dateEqual(tmp, relativeDate) ? " d-start" : " d-end";
+						} else if (cfg.__endTo) {
+							tmpClass = that.dateEqual(tmp, relativeDate) ? " d-end" : " d-start";
+						}
+
+						str += "<li data-date=\"" + that.format(args.date) + "\" data-day=\"" + i + "\" data-week=\"" + args.date.week + "\" data-month=\"" + args.date.month +
+							"\" data-year=\"" + args.date.year + "\" class=\"d-item" + (args.focus ? " d-focus" : "") + (args.inRange ? (args.skip ? " d-dis" : (args.selected ?
+								" d-selected" + tmpClass : "")) : " d-dis") + "\">" +
+							"<span class=\"d-wraper\">" + i +
 							"</span>" +
-							"";
+							"</li>";
 					}
 
 					void(onDayBuild && onDayBuild.call(that, i, args));
@@ -522,13 +556,13 @@
 				var day = that.getDays(y, m); //获取当月最后一天
 				var wkDay = that.getWeekDay(y, m, 1); //获取当天星期几
 				for (var i = 0; i < n; i++) {
-					var yStr = ("<div class="\"m-year\"" data-year="\"{Y}\"" data-month="\""" +="" m="" "\"=""><b>{Y}" + tffCalLang[lang].y + "{M}" + tffCalLang[lang].m + "</b></div>")
+					var yStr = ("<div class=\"m-year\" data-year=\"{Y}\" data-month=\"" + m + "\"><b>{Y}" + tffCalLang[lang].y + "{M}" + tffCalLang[lang].m + "</b></div>")
 						.replace(/\{Y\}/g, y)
 						.replace(/\{M\}/g, m + 1); //年 + 月
-					var wStr = "<ul class="\"m-week\""><li class="\"w-item" w-wkend\"="">" + weeks[0] + "</li><li class="\"w-item\"">" + weeks.slice(1, 6)
-						.join("</li><li class="\"w-item\"">") + "</li><li class="\"w-item" w-wkend\"="">" + weeks[6] + "</li></ul>"; //月
-					var dStr = "<ul class="\"m-day\"">" + genEmpty(wkDay) + genDay(day) + genEmpty(42 - day - wkDay) + "</ul>"; //日 总共42格 没填满的用空白填
-					monthArr[mode > 0 ? "push" : "unshift"]("<div class="\"c-month\"">" + yStr + wStr + dStr + "</div>");
+					var wStr = "<ul class=\"m-week\"><li class=\"w-item w-wkend\">" + weeks[0] + "</li><li class=\"w-item\">" + weeks.slice(1, 6)
+						.join("</li><li class=\"w-item\">") + "</li><li class=\"w-item w-wkend\">" + weeks[6] + "</li></ul>"; //月
+					var dStr = "<ul class=\"m-day\">" + genEmpty(wkDay) + genDay(day) + genEmpty(42 - day - wkDay) + "</ul>"; //日 总共42格 没填满的用空白填
+					monthArr[mode > 0 ? "push" : "unshift"]("<div class=\"c-month\">" + yStr + wStr + dStr + "</div>");
 					var _d = that[mode > 0 ? "getNextMonth" : "getPrevMonth"]({ //获取下一个月
 						year: y,
 						month: m
@@ -619,7 +653,82 @@
 					.oriDate;
 				var max = +this.getDate(maxDate)
 					.oriDate;
-				return d >= min && d <= max;="" }="" },="" 显示日历="" show:="" function()="" {="" if="" (this.__visible)="" return="" false;="" $(this.elements[this.__curelementindex].cfgs.container="" ||="" this.defaults.container)="" .show();="" this.__visible="true;" 隐藏日历="" hide:="" var="" that="this;" (!that.__visible)="" $(that.elements[that.__curelementindex].cfgs.container="" that.defaults.container)="" .hide();="" that.__visible="false;" that.__curelementindex="-1;" cache:="" {},="" elements:="" [],="" 绑定的元素="" relateto:="" function(startel,="" endel)="" 关联到="" 结束的时间="" console.log(arguments);="" startindex="startEl.data("tff_cal_index");" endindex="endEl.data("tff_cal_index");" sel="this.elements[startIndex];" eel="this.elements[endIndex];" sel.cfgs.__endto="eel;" 结束时间="" eel.cfgs.__startfrom="sel;" 开始时间="" isvisible:="" this.__visible;="" **="" *="" 获取两个日期的差值(天数)="" @param="" {date|object|string}="" startdate="" 开始日期="" enddate="" 结束日期="" @return="" {integer}="" 相差的天数="" getdiff:="" function(startdate,="" enddate)="" (!startdate="" !enddate)="" 0;="" adate="this.getDate(startDate)," bdate="this.getDate(endDate);" math.abs((adate.value="" -="" bdate.value)="" (86400000)="" |="" 0);="" 设置日历位置="" {object}="" input="" setposition:="" function(input)="" this.elements[this.__curelementindex];="" cfgs="input.cfgs;" el="input.el;" _wrap="$(cfgs.container);" x="el.offset()" .left;="" y="el.offset()" .top;="" winw="$(window)" .width();="" winh="$(window)" .height();="" wrapw="_wrap.width();" wraph="_wrap.height();" offsetx="cfgs.offsetX" offsety="cfgs.offsetY" el.outerheight();="" (x="" +=""> winW && _o.autoPosition === true) {
+				return d >= min && d <= max;
+			}
+		},
+		//显示日历
+		show: function() {
+			if (this.__visible) {
+				return false;
+			}
+			$(this.elements[this.__curElementIndex].cfgs.container || this.defaults.container)
+				.show();
+			this.__visible = true;
+		},
+		//隐藏日历
+		hide: function() {
+			var that = this;
+			if (!that.__visible) {
+				return false;
+			}
+			$(that.elements[that.__curElementIndex].cfgs.container || that.defaults.container)
+				.hide();
+			that.__visible = false;
+			that.__curElementIndex = -1;
+		},
+		cache: {},
+		elements: [], //绑定的元素
+		relateTo: function(startEl, endEl) { //关联到 结束的时间
+			// console.log(arguments);
+			var startIndex = startEl.data("tff_cal_index");
+			var endIndex = endEl.data("tff_cal_index");
+			var sel = this.elements[startIndex];
+			var eel = this.elements[endIndex];
+			sel.cfgs.__endTo = eel; //结束时间
+			eel.cfgs.__startFrom = sel; //开始时间
+		},
+		isVisible: function() {
+			return this.__visible;
+		},
+		/**
+		 * 获取两个日期的差值(天数)
+		 * @param  {Date|Object|String} startDate   开始日期
+		 * @param  {Date|Object|String} endDate     结束日期
+		 * @return {Integer}                        相差的天数
+		 */
+		getDiff: function(startDate, endDate) {
+			if (!startDate || !endDate) {
+				return 0;
+			}
+
+			var aDate = this.getDate(startDate),
+				bDate = this.getDate(endDate);
+
+			return Math.abs((aDate.value - bDate.value) / (86400000) | 0);
+		},
+		/**
+		 * 设置日历位置
+		 * @param {Object} input 
+		 */
+		setPosition: function(input) {
+			input = input || this.elements[this.__curElementIndex];
+			var cfgs = input.cfgs;
+			var el = input.el;
+			var _wrap = $(cfgs.container);
+			var x = el.offset()
+				.left;
+			var y = el.offset()
+				.top;
+			var winW = $(window)
+				.width();
+			var winH = $(window)
+				.height();
+			var wrapW = _wrap.width();
+			var wrapH = _wrap.height();
+
+			var offsetX = cfgs.offsetX || 0;
+			var offsetY = cfgs.offsetY || el.outerHeight();
+			// if (x + wrapW > winW && _o.autoPosition === true) {
 			//     _wrap.css({
 			//         left: x - (x + wrapW - winW) + offsetX
 			//     });
@@ -726,4 +835,4 @@
 
 	$.fn.tffCal.tool = tffcal;
 
-})(window.jQuery || require("jquery"));</=></=></=>
+})(window.jQuery || require("jquery"));
