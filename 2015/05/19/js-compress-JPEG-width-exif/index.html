@@ -191,7 +191,7 @@
 &lt;br&gt;
 &lt;<span class="tag">button</span> id=<span class="string">"btn"</span>&gt;获取&lt;/button&gt;
 </code></pre><p><strong>js:</strong></p>
-<pre><code><span class="keyword">var</span> filedom = <span class="built_in">document</span>.getElementById(<span class="string">"file"</span>);
+<pre><code><span class="keyword">var</span> filedom = <span class="built_in">document</span>.getElementById(<span class="string">"filedom"</span>);
 <span class="keyword">var</span> imgdom = <span class="built_in">document</span>.getElementById(<span class="string">"img"</span>);
 <span class="keyword">var</span> btn = <span class="built_in">document</span>.getElementById(<span class="string">"btn"</span>);
 
@@ -204,7 +204,7 @@ btn.onclick = <span class="function"><span class="keyword">function</span><span 
     }
 
     showImage(imgFile,<span class="function"><span class="keyword">function</span><span class="params">(src)</span></span>{
-        img.src = src;
+        imgdom.src = src;
     });
 
 }
